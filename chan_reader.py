@@ -4,6 +4,7 @@ import basc_py4chan
 from collections import defaultdict
 from crypto import Crypto
 import os
+from operator import itemgetter
 
 ACCEPTABLE_NEIGHBORS = [' ', '.', '/', '-', '!', ',', '?', '_']
 class ChanReader():
@@ -11,10 +12,11 @@ class ChanReader():
         self.crypto = _crypto
         self.board = basc_py4chan.Board(_board)
         self.all_thread_ids = self.board.get_all_thread_ids()
-        self.counts = defaultdict(lambda: {'count': 0} )
+        self.counts = defaultdict(lambda: {'count': 0, 'comments': []} )
         self.post_ids = defaultdict(lambda: False )
         self.options = {'a': {'display': 'Update Datastore', 'func': self.update},
                         'b': {'display': 'Display Counts', 'func': self.displayCounts},
+                        'c': {'display': 'Get Comments by Coin', 'func': self._getComments},
                         }
 
 
@@ -48,11 +50,37 @@ class ChanReader():
         count = 1
         for reply in thread.replies:
             # os.system('clear')
-            self._printFormatter('cycle', 2, 'Reply', count, self.all_thread_ids, reply.post_id)
+            self._printFormatter('cycle', 2, 'Reply', count, thread.replies, reply.post_id)
             count += 1
             if not self.post_ids[reply.post_id]:
                 self.post_ids[reply.post_id] = True
                 self._checkForNod(reply.text_comment)
+
+    def _getTopCounts(self, limit=None):
+        self._printFormatter('subTitle', 0, "Get Top Counts")
+        keys = self.counts.keys()
+        keys.self.sort() #key=lambda x: x[1]
+        # sorted(keys, key=itemgetter('count') #fix
+        for currency in keys:
+            self._printFormatter('displayCounts', 1, currency, self.counts[currency]['count'])
+
+    def _getComments(self):
+        currency = raw_input("select a currency: ")
+        self._printFormatter('subTitle', 0, "Get Comments on {0}".format(currency))
+        selection = ''
+        i = 0
+        while selection != 'q' and i < len(self.counts[currency]['comments']):
+            i0 = i
+            while i <= i0 + 5 and i < len(self.counts[currency]['comments']):
+                try:
+                    print(" - " * 100)
+                    self._printFormatter('displayCounts', 1, currency, self.counts[currency]['comments'][i])
+                except Exception as e:
+                    print('Failed to print comment')
+                    print(e.message, e.args)
+                i += 1
+            selection = raw_input(': ')
+
 
     def _updateThreads(self):
         self.all_thread_ids = self.board.get_all_thread_ids()
@@ -81,9 +109,11 @@ class ChanReader():
             if cur1 in content:
                 if self._checkIndividualWord(content, cur1):
                     self.counts[currency]['count'] += 1
+                    self.counts[currency]['comments'].append(content)
             elif cur2  in content:
                 if self._checkIndividualWord(content, cur2):
                     self.counts[currency]['count'] += 1
+                    self.counts[currency]['comments'].append(content)
 
     def _checkIndividualWord(self, content, substring):
         # Checks if nod at cypto is isolated, or just a substring of a larger word.
@@ -106,46 +136,3 @@ class ChanReader():
             start = content.find(substring, end)
             end = start + len(substring)
         return False
-
-
-
-
-
-
-#
-#
-# b = basc_py4chan.Board('b')
-# threads = b.get_threads()
-# print("Got %i threads" % len(threads))
-# first_thread = threads[0]
-# print("First thread: %r" % first_thread)
-# print("Replies: %r" % first_thread.replies)
-# print("Updating first thread...")
-# first_thread.update()
-# print("First thread now: %r" % first_thread)
-# for post in first_thread.replies:
-#
-# board = basc_py4chan.Board('v')
-# all_thread_ids = board.get_all_thread_ids()
-# first_thread_id = all_thread_ids[0]
-# thread = board.get_thread(first_thread_id)
-#     # thread information
-#     print(thread)
-#     print('Sticky?', thread.sticky)
-#     print('Closed?', thread.closed)
-#     # topic information
-#     topic = thread.topic
-#     print('Topic Repr', topic)
-#     print('Postnumber', topic.post_number)
-#     print('Timestamp',  topic.timestamp)
-#     print('Datetime',   repr(topic.datetime))
-#     print('Subject',    topic.subject)
-#     print('Comment',    topic.text_comment)
-#     print('Replies',    thread.replies)
-#     # file information
-#     for f in thread.file_objects():
-#         print('Filename', f.filename)
-#         print('  Filemd5hex', f.file_md5_hex)
-#         print('  Fileurl', f.file_url)
-#         print('  Thumbnailurl', f.thumbnail_url)
-#         print()
