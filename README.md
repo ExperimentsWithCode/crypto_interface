@@ -16,15 +16,15 @@
 
 
 # To run
-...
+```
   $ python main.py
-...
+```
 OR
-...
+```
   from main import Main
   m = Main()
   m.run()
-...
+```
 
 # Basic Interface:
 ```
