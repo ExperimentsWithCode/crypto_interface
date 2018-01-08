@@ -16,18 +16,18 @@
 
 
 # To run
-
+...
   $ python main.py
-
+...
 OR
-
+...
   from main import Main
   m = Main()
   m.run()
-
+...
 
 # Basic Interface:
-
+```
 Select what you would like to do
 	Enter `a` to `Crypto Interface`
 	Enter `b` to `4Chan Interface`
@@ -62,7 +62,7 @@ Select: b
 		DOGE: 3 mentions
 
   ...
-
+```
 
 
 # Dependencies
@@ -73,3 +73,11 @@ Select: b
   * requests
   * collections
   * basc_py4chan
+
+
+# To DO:
+* [ ] Separate Currencies from base pairs
+* [ ] Add value options between base currencies
+* [ ] I/O for portfolio
+* [ ] proper DB for mentions history
+* [ ]
