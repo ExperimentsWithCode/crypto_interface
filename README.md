@@ -33,6 +33,37 @@ Select what you would like to do
 	Enter `b` to `4Chan Interface`
 	Enter `exit` to `exit`
 
+Select: b
+
+...
+
+Select what you would like to do
+	Enter `a` to `Update Datastore`
+	Enter `b` to `Display Counts`
+	Enter `main` to `return to main`
+	Enter `exit` to `exit`
+Select: b
+
+	Display Counts
+		ADA: 3 mentions
+		AM: 10 mentions
+		AMP: 2 mentions
+		ANT: 4 mentions
+		ARK: 9 mentions
+		BAT: 20 mentions
+		BLOCK: 1 mentions
+		BNT: 7 mentions
+		BTC: 75 mentions
+		CLUB: 1 mentions
+		CRYPT: 1 mentions
+		DASH: 1 mentions
+		DGB: 1 mentions
+		DNT: 1 mentions
+		DOGE: 3 mentions
+
+  ...
+
+
 
 # Dependencies
 * python

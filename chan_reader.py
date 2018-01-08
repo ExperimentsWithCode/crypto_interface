@@ -5,6 +5,7 @@ from collections import defaultdict
 from crypto import Crypto
 import os
 
+ACCEPTABLE_NEIGHBORS = [' ', '.', '/', '-', '!', ',', '?', '_']
 class ChanReader():
     def __init__(self, _crypto, _board="biz"):
         self.crypto = _crypto
@@ -33,11 +34,11 @@ class ChanReader():
 
     def _cycleThreads(self):
         count = 1
-        self._printFormatter('subTitle', 1, "Dispaly Threads")
+        self._printFormatter('subTitle', 1, "Display Threads")
         for idx in self.all_thread_ids:
             thread = self.board.get_thread(idx)
             # os.system('clear')
-            self._printFormatter('subTitle', 1, "Dispaly Threads")
+            self._printFormatter('subTitle', 1, "Display Threads")
             self._printFormatter('cycle', 1, 'Thread', count, self.all_thread_ids, thread.id)
             self._cycleReplies(thread)
             count += 1
@@ -64,7 +65,7 @@ class ChanReader():
         elif _type == "displayCounts":
             print("{0}{1}: {2} mentions".format("\t" * 2, header, x ))
         elif _type == "subTitle":
-            print("{0}{1}".format("_"*100+"\n\t" * 1, "Display Counts"))
+            print("{0}{1}".format("_"*100+"\n\t" * 1, header))
         elif _type == "title":
             print("{0}{1}".format("_"*100+"\n\t" * 0, header))
         else:
@@ -74,10 +75,38 @@ class ChanReader():
     def _checkForNod(self, content):
         # Checks to see if any currency stored in crypto is mentioned.
         for currency in self.crypto.currencies.keys():
-            if currency in content:
-                self.counts[currency]['count'] += 1
-            elif self.crypto.currencies[currency]['CurrencyLong'] in content:
-                self.counts[currency]['count'] += 1
+            content = content.lower()
+            cur1 = currency.lower()
+            cur2 = self.crypto.currencies[currency]['CurrencyLong'].lower()
+            if cur1 in content:
+                if self._checkIndividualWord(content, cur1):
+                    self.counts[currency]['count'] += 1
+            elif cur2  in content:
+                if self._checkIndividualWord(content, cur2):
+                    self.counts[currency]['count'] += 1
+
+    def _checkIndividualWord(self, content, substring):
+        # Checks if nod at cypto is isolated, or just a substring of a larger word.
+        start = content.find(substring)
+        end = start + len(substring)
+        index = 0
+        loops = 0
+        while content.find(substring, index) >= 0 and end + 1 < len(content):
+            if start == 0:
+                if content[end + 1] in ACCEPTABLE_NEIGHBORS:
+                    return True
+            elif end == len(content):
+                if content[start - 1] in ACCEPTABLE_NEIGHBORS:
+                    return True
+            else:
+                if (content[start - 1] in ACCEPTABLE_NEIGHBORS and
+                    content[end + 1] in ACCEPTABLE_NEIGHBORS):
+                    return True
+            index = end
+            start = content.find(substring, end)
+            end = start + len(substring)
+        return False
+
 
 
 
