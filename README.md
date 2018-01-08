@@ -1,6 +1,6 @@
 # Crypto Interface
 
-# Goal:
+## Goal:
 * Track mentions on 4Chan, Reddit Comments, Reddit Posts
 * a lot of other cool shit
 * Add more base pairs
@@ -15,7 +15,7 @@
 * Can display current 4Chan mention counts.
 
 
-# To run
+## To run
 ```
   $ python main.py
 ```
@@ -26,7 +26,7 @@ OR
   m.run()
 ```
 
-# Basic Interface:
+## Basic Interface:
 ```
 Select what you would like to do
 	Enter `a` to `Crypto Interface`
@@ -65,19 +65,20 @@ Select: b
 ```
 
 
-# Dependencies
+## Dependencies
 * python
 
-## Libraries
+### Libraries
   * json
   * requests
   * collections
   * basc_py4chan
 
 
-# To DO:
+## To DO:
 * [ ] Separate Currencies from base pairs
 * [ ] Add value options between base currencies
 * [ ] I/O for portfolio
 * [ ] proper DB for mentions history
-* [ ]
+* [ ] Add tracking for Reddit
+* 
