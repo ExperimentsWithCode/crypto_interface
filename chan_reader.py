@@ -9,7 +9,6 @@ from scanner import Scanner
 
 ACCEPTABLE_NEIGHBORS = [' ', '.', '/', '-', '!', ',', '?', '_']
 
-
 class ChanReader(Scanner):
     def __init__(self, _crypto, config):
         Scanner.__init__(self, _crypto)
@@ -26,6 +25,13 @@ class ChanReader(Scanner):
     def _update_threads(self):
         self.all_thread_ids = self.board.get_all_thread_ids()
         self.current_thread = 0
+
+    def _displayCounts(self):
+        self._printFormatter('subTitle', 0, "Display Counts")
+        keys = self.counts.keys()
+        keys.sort()
+        for currency in keys:
+            self._printFormatter('displayCounts', 1, currency, self.counts[currency]['count'])
 
     def _cycle_threads(self):
         count = 1
@@ -56,3 +62,4 @@ class ChanReader(Scanner):
         # sorted(keys, key=itemgetter('count') #fix
         for currency in keys:
             self._print_formatter('displayCounts', 1, currency, self.counts[currency]['count'])
+
