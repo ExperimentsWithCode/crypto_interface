@@ -5,6 +5,7 @@ from collections import defaultdict
 from crypto import Crypto
 import os
 from operator import itemgetter
+from scanner import Scanner
 
 ACCEPTABLE_NEIGHBORS = [' ', '.', '/', '-', '!', ',', '?', '_']
 class ChanReader():
@@ -18,12 +19,12 @@ class ChanReader():
                         'b': {'display': 'Display Counts', 'func': self._displayCounts},
                         'c': {'display': 'Display Comments by Coin', 'func': self._displayComments},
                         }
-
+        self.all_thread_ids = self.board.get_all_thread_ids()
 
     def update(self):
-        self._printFormatter('title', 0, "Update Datastore")
-        self._updateThreads()
-        self._cycleThreads()
+        self._print_formatter('title', 0, "Update Datastore")
+        self._update_threads()
+        self._cycle_threads()
         print("\n\nDone Updating")
         print("!"*100+"\n")
 
@@ -33,28 +34,32 @@ class ChanReader():
         keys.sort()
         for currency in keys:
             self._printFormatter('displayCounts', 1, currency, self.counts[currency]['count'])
+            
+    def _update_threads(self):
+        self.all_thread_ids = self.board.get_all_thread_ids()
+        self.current_thread = 0
 
-    def _cycleThreads(self):
+    def _cycle_threads(self):
         count = 1
-        self._printFormatter('subTitle', 1, "Display Threads")
+        self._print_formatter('subTitle', 1, "Display Threads")
         for idx in self.all_thread_ids:
             thread = self.board.get_thread(idx)
             # os.system('clear')
-            self._printFormatter('subTitle', 1, "Display Threads")
-            self._printFormatter('cycle', 1, 'Thread', count, self.all_thread_ids, thread.id)
-            self._cycleReplies(thread)
+            self._print_formatter('subTitle', 1, "Display Threads")
+            self._print_formatter('cycle', 1, 'Thread', count, len(self.all_thread_ids), thread.id)
+            self._cycle_replies(thread)
             count += 1
 
-    def _cycleReplies(self, thread):
-        self._printFormatter('subTitle', 0, "Display Replies")
+    def _cycle_replies(self, thread):
+        self._print_formatter('subTitle', 0, "Display Replies")
         count = 1
         for reply in thread.replies:
             # os.system('clear')
-            self._printFormatter('cycle', 2, 'Reply', count, thread.replies, reply.post_id)
+            self._print_formatter('cycle', 2, 'Reply', count, len(thread.replies), reply.post_id)
             count += 1
             if not self.post_ids[reply.post_id]:
                 self.post_ids[reply.post_id] = True
-                self._checkForNod(reply.text_comment)
+                self._check_for_nod(reply.text_comment)
 
     # def _DisplayTopCounts(self, limit=None):
     #     self._printFormatter('subTitle', 0, "Get Top Counts")
@@ -64,7 +69,7 @@ class ChanReader():
     #     for currency in keys:
     #         self._printFormatter('displayCounts', 1, currency, self.counts[currency]['count'])
 
-    def _displayComments(self):
+    def _display_comments(self):
         currency = raw_input("select a currency: ")
         self._printFormatter('subTitle', 0, "Get Comments on {0}".format(currency))
         selection = ''
@@ -82,12 +87,12 @@ class ChanReader():
             selection = raw_input(': ')
 
 
-    def _updateThreads(self):
+    def _update_threads(self):
         self.all_thread_ids = self.board.get_all_thread_ids()
         self.current_thread = 0
 
 
-    def _printFormatter(self, _type, indent=0, header=None, x=None, y=None, z=None):
+    def _print_formatter(self, _type, indent=0, header=None, x=None, y=None, z=None):
         if _type == "cycle":
             print("{0}{1}: {2} of {3} - {4}".format("\t" * indent, header, x, len(y), z))
         elif _type == "displayCounts":
@@ -100,7 +105,7 @@ class ChanReader():
             print("failed to print")
 
 
-    def _checkForNod(self, content):
+    def _check_for_nod(self, content):
         # Checks to see if any currency stored in crypto is mentioned.
         for currency in self.crypto.currencies.keys():
             content = content.lower()
@@ -115,7 +120,7 @@ class ChanReader():
                     self.counts[currency]['count'] += 1
                     self.counts[currency]['comments'].append(content)
 
-    def _checkIndividualWord(self, content, substring):
+    def _check_individual_word(self, content, substring):
         # Checks if nod at cypto is isolated, or just a substring of a larger word.
         start = content.find(substring)
         end = start + len(substring)
@@ -136,3 +141,11 @@ class ChanReader():
             start = content.find(substring, end)
             end = start + len(substring)
         return False
+
+    def _get_top_counts(self, limit=None):
+        self._print_formatter('subTitle', 0, "Get Top Counts")
+        keys = self.counts.keys()
+        keys.self.sort() #key=lambda x: x[1]
+        # sorted(keys, key=itemgetter('count') #fix
+        for currency in keys:
+            self._print_formatter('displayCounts', 1, currency, self.counts[currency]['count'])

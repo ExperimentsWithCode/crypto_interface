@@ -1,14 +1,17 @@
 from crypto import Crypto
 from chan_reader import ChanReader
+from reddit_reader import RedditReader
 
-
+REDDIT_SUBS = ['cryptocurrency']
 
 class Main():
-    def __init__(self, board = 'biz'):
+    def __init__(self):
         self.crypto = Crypto()
-        self.chan_reader = ChanReader(self.crypto, 'biz')
+        self.chan_reader = ChanReader(self.crypto, {'board': 'biz'})
+        self.reddit_reader = RedditReader(self.crypto, {'subs': REDDIT_SUBS})
         self.options = {'a': {'display': 'Crypto Interface', 'func': self.crypto.options},
                         'b': {'display': '4Chan Interface', 'func': self.chan_reader.options},
+                        'r': {'display': 'Reddit Interface', 'func': self.reddit_reader.options}
                         }
 
     def run(self):

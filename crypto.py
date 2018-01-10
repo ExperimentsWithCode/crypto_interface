@@ -53,7 +53,7 @@ class Crypto():
         print("Currency List")
         for d in self.currencies.keys():
             this_currency = self.currencies[d]
-            print "{0} - {1} - {2}".format(this_currency['Currency'], this_currency['CurrencyLong'], this_currency['IsActive'])
+            print("{0} - {1} - {2}".format(this_currency['Currency'], this_currency['CurrencyLong'], this_currency['IsActive']))
 
     def _getCurrencies(self):
         self._printDivider()
