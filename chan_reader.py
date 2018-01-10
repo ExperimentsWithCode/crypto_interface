@@ -15,8 +15,8 @@ class ChanReader():
         self.counts = defaultdict(lambda: {'count': 0, 'comments': []} )
         self.post_ids = defaultdict(lambda: False )
         self.options = {'a': {'display': 'Update Datastore', 'func': self.update},
-                        'b': {'display': 'Display Counts', 'func': self.displayCounts},
-                        'c': {'display': 'Get Comments by Coin', 'func': self._getComments},
+                        'b': {'display': 'Display Counts', 'func': self._displayCounts},
+                        'c': {'display': 'Display Comments by Coin', 'func': self._displayComments},
                         }
 
 
@@ -27,7 +27,7 @@ class ChanReader():
         print("\n\nDone Updating")
         print("!"*100+"\n")
 
-    def displayCounts(self):
+    def _displayCounts(self):
         self._printFormatter('subTitle', 0, "Display Counts")
         keys = self.counts.keys()
         keys.sort()
@@ -56,15 +56,15 @@ class ChanReader():
                 self.post_ids[reply.post_id] = True
                 self._checkForNod(reply.text_comment)
 
-    def _getTopCounts(self, limit=None):
-        self._printFormatter('subTitle', 0, "Get Top Counts")
-        keys = self.counts.keys()
-        keys.self.sort() #key=lambda x: x[1]
-        # sorted(keys, key=itemgetter('count') #fix
-        for currency in keys:
-            self._printFormatter('displayCounts', 1, currency, self.counts[currency]['count'])
+    # def _DisplayTopCounts(self, limit=None):
+    #     self._printFormatter('subTitle', 0, "Get Top Counts")
+    #     keys = self.counts.keys()
+    #     keys.self.sort() #key=lambda x: x[1]
+    #     # sorted(keys, key=itemgetter('count') #fix
+    #     for currency in keys:
+    #         self._printFormatter('displayCounts', 1, currency, self.counts[currency]['count'])
 
-    def _getComments(self):
+    def _displayComments(self):
         currency = raw_input("select a currency: ")
         self._printFormatter('subTitle', 0, "Get Comments on {0}".format(currency))
         selection = ''
