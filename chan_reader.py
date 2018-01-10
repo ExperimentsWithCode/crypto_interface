@@ -16,8 +16,8 @@ class ChanReader():
         self.counts = defaultdict(lambda: {'count': 0, 'comments': []} )
         self.post_ids = defaultdict(lambda: False )
         self.options = {'a': {'display': 'Update Datastore', 'func': self.update},
-                        'b': {'display': 'Display Counts', 'func': self._displayCounts},
-                        'c': {'display': 'Display Comments by Coin', 'func': self._displayComments},
+                        'b': {'display': 'Display Counts', 'func': self._display_counts},
+                        'c': {'display': 'Display Comments by Coin', 'func': self._display_comments},
                         }
         self.all_thread_ids = self.board.get_all_thread_ids()
 
@@ -28,12 +28,12 @@ class ChanReader():
         print("\n\nDone Updating")
         print("!"*100+"\n")
 
-    def _displayCounts(self):
-        self._printFormatter('subTitle', 0, "Display Counts")
+    def _display_counts(self):
+        self._print_formatter('subTitle', 0, "Display Counts")
         keys = self.counts.keys()
         keys.sort()
         for currency in keys:
-            self._printFormatter('displayCounts', 1, currency, self.counts[currency]['count'])
+            self._print_formatter('displayCounts', 1, currency, self.counts[currency]['count'])
             
     def _update_threads(self):
         self.all_thread_ids = self.board.get_all_thread_ids()
@@ -46,7 +46,7 @@ class ChanReader():
             thread = self.board.get_thread(idx)
             # os.system('clear')
             self._print_formatter('subTitle', 1, "Display Threads")
-            self._print_formatter('cycle', 1, 'Thread', count, len(self.all_thread_ids), thread.id)
+            self._print_formatter('cycle', 1, 'Thread', count, self.all_thread_ids, thread.id)
             self._cycle_replies(thread)
             count += 1
 
@@ -55,23 +55,23 @@ class ChanReader():
         count = 1
         for reply in thread.replies:
             # os.system('clear')
-            self._print_formatter('cycle', 2, 'Reply', count, len(thread.replies), reply.post_id)
+            self._print_formatter('cycle', 2, 'Reply', count, thread.replies, reply.post_id)
             count += 1
             if not self.post_ids[reply.post_id]:
                 self.post_ids[reply.post_id] = True
                 self._check_for_nod(reply.text_comment)
 
     # def _DisplayTopCounts(self, limit=None):
-    #     self._printFormatter('subTitle', 0, "Get Top Counts")
+    #     self._print_formatter('subTitle', 0, "Get Top Counts")
     #     keys = self.counts.keys()
     #     keys.self.sort() #key=lambda x: x[1]
     #     # sorted(keys, key=itemgetter('count') #fix
     #     for currency in keys:
-    #         self._printFormatter('displayCounts', 1, currency, self.counts[currency]['count'])
+    #         self._print_formatter('displayCounts', 1, currency, self.counts[currency]['count'])
 
     def _display_comments(self):
         currency = raw_input("select a currency: ")
-        self._printFormatter('subTitle', 0, "Get Comments on {0}".format(currency))
+        self._print_formatter('subTitle', 0, "Get Comments on {0}".format(currency))
         selection = ''
         i = 0
         while selection != 'q' and i < len(self.counts[currency]['comments']):
@@ -79,7 +79,7 @@ class ChanReader():
             while i <= i0 + 5 and i < len(self.counts[currency]['comments']):
                 try:
                     print(" - " * 100)
-                    self._printFormatter('displayCounts', 1, currency, self.counts[currency]['comments'][i])
+                    self._print_formatter('displayCounts', 1, currency, self.counts[currency]['comments'][i])
                 except Exception as e:
                     print('Failed to print comment')
                     print(e.message, e.args)
@@ -112,11 +112,11 @@ class ChanReader():
             cur1 = currency.lower()
             cur2 = self.crypto.currencies[currency]['CurrencyLong'].lower()
             if cur1 in content:
-                if self._checkIndividualWord(content, cur1):
+                if self._check_individual_word(content, cur1):
                     self.counts[currency]['count'] += 1
                     self.counts[currency]['comments'].append(content)
             elif cur2  in content:
-                if self._checkIndividualWord(content, cur2):
+                if self._check_individual_word(content, cur2):
                     self.counts[currency]['count'] += 1
                     self.counts[currency]['comments'].append(content)
 
