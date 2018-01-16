@@ -3,6 +3,7 @@ from praw.models import MoreComments
 import os
 from collections import defaultdict
 from scanner import Scanner
+from config import REDDIT_SECRET, REDDIT_API
 
 ACCEPTABLE_NEIGHBORS = [' ', '.', '/', '-', '!', ',', '?', '_']
 
@@ -11,8 +12,8 @@ class RedditReader(Scanner):
     def __init__(self, _crypto, config, pg):
         Scanner.__init__(self, _crypto, pg)
         self.reddit = praw.Reddit(
-            client_id=os.getenv('REDDIT_API', 'ZLQ1i92zSxaWSQ'),
-            client_secret=os.getenv('REDDIT_SECRET', 'Da5pUrfOmsnxbhZ8gA_iKFNSB8o'),
+            client_id=os.getenv('REDDIT_API', REDDIT_API),
+            client_secret=os.getenv('REDDIT_SECRET', REDDIT_SECRET),
             user_agent='python:crypto-sleuth:0.0.1 (by /u/rlawford)'
         )
         self.subs = config['subs']

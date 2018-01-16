@@ -17,23 +17,3 @@ class Coin():
         self.percent_change_7d = config["percent_change_7d"] if 'percent_change_7d' in keys else None
         self.last_updated = config["last_updated"] if 'last_updated' in keys else None
         # update(self, config)
-
-    #
-    # def update(self, config):
-    #     self.idx =                   config["id"]
-    #     self.name =                  config["name"]
-    #     self.symbol =                config["symbol"]
-    #     self.rank =                  config["rank"]
-    #     self.price_usd =             config["price_usd"]
-    #     self.price_btc =             config["price_btc"]
-    #     self.daily_volume_usd =      config["daily_volume_usd"]
-    #     self.market_cap_usd =        config["market_cap_usd"]
-    #     self.available_supply =      config["available_supply"]
-    #     self.total_supply =          config["total_supply"]
-    #     self.max_supply =            config["max_supply"]
-    #     self.percent_change_1h =     config["percent_change_1h"]
-    #     self.percent_change_24h =    config["percent_change_24h"]
-    #     self.percent_change_7d =     config["percent_change_7d"]
-    #     self.last_updated =          config["last_updated"]
-    #
-    #
