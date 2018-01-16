@@ -5,11 +5,9 @@ import pandas as pd
 import psycopg2
 from psycopg2.extensions import AsIs
 import os
+from logger import Logger
 
-from src.utils.logger import Logger
-from src.db.table_names import TABLE_NAMES
-
-log = Logger(__name__)
+log = Logger('pg connection')
 
 
 class PostgresConnection:
@@ -17,15 +15,19 @@ class PostgresConnection:
         self.conn = None
         self.cur = None
         self.run_type = os.getenv('RUN_TYPE', 'BACKTEST')
+        self.table_names = {
+            'save_mentions': 'coin_mentions',
+            'save_mention_bodies': 'mention_bodies'
+        }
 
     def table_name(self, table_type):
-        return TABLE_NAMES[table_type][self.run_type]
+        return self.table_names[table_type]
 
     def _exec_query(self, query, params):
         ###
         # EXECUTES A QUERY ON THE DATABASE, RETURNS NO DATA
         ###
-        self.conn = psycopg2.connect("dbname=cryptobot user=patrickmckelvy")
+        self.conn = psycopg2.connect("dbname=crypto-community-explorer user=patrickmckelvy")
         self.cur = self.conn.cursor()
         try:
             self.cur.execute(query, params)
@@ -57,26 +59,27 @@ class PostgresConnection:
         self.conn.close()
         return result
 
-    def save_trade(self, order_type, market, quantity, rate, uuid, timestamp):
-        log.debug('{PSQL} == SAVE trade ==')
-        fmt_str = "('{order_type}','{market}',{quantity},{rate},'{uuid}','{base_currency}','{market_currency}','{timestamp}')"
-        columns = "order_type, market, quantity, rate, uuid, base_currency, market_currency, timestamp"
-        market_currencies = market.split('-')
-        values = {
-            "order_type": order_type,
-            "market": market,
-            "quantity": quantity,
-            "rate": rate,
-            "uuid": uuid,
-            "base_currency": market_currencies[0],
-            "market_currency": market_currencies[1],
-            "timestamp": timestamp
-        }
+    def save_mentions(self, mentions):
+        fmt_str = "('{coin_id}','{mention_body_id}',{is_thread_title},{is_thread_body},'{is_comment_body}',{num_mentions})"
+        columns = "coin_id, mention_body_id, is_thread_title, is_thread_body, is_comment_body, num_mentions"
+        values = AsIs(','.join(fmt_str.format(**mention) for mention in mentions))
         params = {
             "columns": AsIs(columns),
-            "values": AsIs(fmt_str.format(**values))
+            "values": values
         }
-        query = """ INSERT INTO """ + self.table_name('save_trade') + """ (%(columns)s) VALUES %(values)s; """
+        query = """ INSERT INTO """ + self.table_name('save_mentions') + """ (%(columns)s) VALUES %(values)s; """
+        self._exec_query(query, params)
+        return values
+
+    def save_mention_bodies(self, mention_bodies):
+        fmt_str = "('{thread_id}','{mention_body_id}','{parent_id}','{body}')"
+        columns = "thread_id, mention_body_id, parent_id, body"
+        values = AsIs(','.join(fmt_str.format(**body) for body in mention_bodies))
+        params = {
+            "columns": AsIs(columns),
+            "values": values
+        }
+        query = """ INSERT INTO """ + self.table_name('save_mention_bodies') + """ (%(columns)s) VALUES %(values)s; """
         self._exec_query(query, params)
         return values
 
@@ -152,7 +155,8 @@ class PostgresConnection:
         """
         return self._fetch_query(query, params)
 
-    def get_market_summaries_by_ticker(self, tick, market_names):
+    def get_market_summaries_by_ticker(self, tick, markets):
+        market_names = tuple(markets['marketname'].values)
         log.debug('{PSQL} == GET market summaries by ticker ==')
         params = {
             'ticker_nonce': tick,
@@ -163,23 +167,4 @@ class PostgresConnection:
             WHERE ticker_nonce = %(ticker_nonce)s AND marketname IN %(market_names)s
             ;
         """
-        return self._fetch_query(query, params)
-
-    def get_fixture_markets(self, base_currencies):
-        log.debug('{PSQL} == GET fixture markets ==')
-        fmt_str = "(%(currencies)s)"
-        columns = "currencies"
-        values = AsIs(','.join(fmt_str.format(currency) for currency in base_currencies))
-        params = {
-            'base_currencies': tuple(base_currencies)
-        }
-        query = """ SELECT * FROM fixture_markets
-        WHERE basecurrency IN ('ETH', 'BTC');
-        """
-        return self._fetch_query(query, params)
-
-    def get_fixture_currencies(self):
-        log.debug('{PSQL} == GET fixture markets ==')
-        params = {}
-        query = """ SELECT * FROM fixture_currencies ; """
         return self._fetch_query(query, params)

@@ -10,8 +10,8 @@ from scanner import Scanner
 ACCEPTABLE_NEIGHBORS = [' ', '.', '/', '-', '!', ',', '?', '_']
 
 class ChanReader(Scanner):
-    def __init__(self, _crypto, config):
-        Scanner.__init__(self, _crypto)
+    def __init__(self, _crypto, config, pg):
+        Scanner.__init__(self, _crypto, pg)
         self.board = basc_py4chan.Board(config['board'])
         self.all_thread_ids = self.board.get_all_thread_ids()
 
@@ -26,12 +26,12 @@ class ChanReader(Scanner):
         self.all_thread_ids = self.board.get_all_thread_ids()
         self.current_thread = 0
 
-    def _displayCounts(self):
-        self._printFormatter('subTitle', 0, "Display Counts")
+    def display_counts(self):
+        self._print_formatter('subTitle', 0, "Display Counts")
         keys = self.counts.keys()
         keys.sort()
         for currency in keys:
-            self._printFormatter('displayCounts', 1, currency, self.counts[currency]['count'])
+            self._print_formatter('displayCounts', 1, currency, self.counts[currency]['count'])
 
     def _cycle_threads(self):
         count = 1
@@ -55,7 +55,7 @@ class ChanReader(Scanner):
                 self.post_ids[reply.post_id] = True
                 self._check_for_nod(reply.text_comment)
 
-    def _getTopCounts(self, limit=None):
+    def _get_top_counts(self, limit=None):
         self._print_formatter('subTitle', 0, "Get Top Counts")
         keys = self.counts.keys()
         keys.self.sort() #key=lambda x: x[1]
