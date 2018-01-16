@@ -8,7 +8,7 @@ class Scanner():
     def __init__(self, _crypto, pg):
         self.pg = pg
         self.crypto = _crypto
-        self.counts = defaultdict(lambda: {'count': 0, 'comments': []} )
+        self.counts = defaultdict(lambda: {'count': 0, 'comments': []})
         self.mentions = defaultdict(
             lambda: {
                 'thread_id': None,
@@ -17,7 +17,8 @@ class Scanner():
                 'is_thread_title': False,
                 'is_thread_body': False,
                 'is_comment_body': False,
-                'coins_mentioned': defaultdict(lambda: 0)})
+                'coins_mentioned': defaultdict(lambda: 0)}
+        )
         self.post_ids = defaultdict(lambda: False )
         self.options = {'a': {'display': 'Update Datastore', 'func': self.update},
                         'b': {'display': 'Display Counts', 'func': self.display_counts},
@@ -120,6 +121,9 @@ class Scanner():
         self.mentions[mention_id]['is_comment_body'] = True
         self.mentions[mention_id]['mention_body_id'] = mention_id
         self.mentions[mention_id]['parent_id'] = parent_id
+
+        self.counts[coin]['count'] += 1
+        self.counts[coin]['comments'].append(content)
 
     @staticmethod
     def _check_for_word(content, substring):
