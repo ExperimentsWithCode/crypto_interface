@@ -16,4 +16,3 @@ class Coin():
         self.percent_change_24h = config["percent_change_24h"] if 'percent_change_24h' in keys else None
         self.percent_change_7d = config["percent_change_7d"] if 'percent_change_7d' in keys else None
         self.last_updated = config["last_updated"] if 'last_updated' in keys else None
-        # update(self, config)
