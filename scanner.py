@@ -105,10 +105,10 @@ class Scanner():
 
     def _check_for_nod(self, content, comment_id, thread_id, parent_id):
         # Checks to see if any currency stored in crypto is mentioned.
-        for currency in self.crypto.currencies.keys():
+        for symbol in self.crypto.coins.keys():
             content = content.lower()
-            cur1 = currency.lower()
-            cur2 = self.crypto.currencies[currency]['CurrencyLong'].lower()
+            cur1 = symbol.lower()
+            cur2 = self.crypto.coins[symbol].name.lower()
             if cur1 in content and self._check_for_word(content, cur1):
                 self._record_nod(comment_id, content, thread_id, cur1, parent_id)
             elif cur2 in content and self._check_for_word(content, cur2):

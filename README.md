@@ -14,7 +14,15 @@
 
 * Can display current 4Chan mention counts.
 
+## Config file
+You must set up a config.py file and store it in the home directory of the project. This file is meant to store all locally relevant credentials. This file should include the following:
 
+```
+REDDIT_SECRET = "____"
+REDDIT_API    = "____"
+DB_NAME       = "____"
+DB_USER       = "____"
+```
 ## To run
 ```
   $ python main.py
@@ -81,4 +89,4 @@ Select: b
 * [ ] I/O for portfolio
 * [ ] proper DB for mentions history
 * [ ] Add tracking for Reddit
-* 
+*
