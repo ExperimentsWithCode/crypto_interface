@@ -1,2 +1,3 @@
 basc_py4chan
 praw
+requests

@@ -11,8 +11,8 @@ class RedditReader(Scanner):
     def __init__(self, _crypto, config):
         Scanner.__init__(self, _crypto)
         self.reddit = praw.Reddit(
-            client_id=os.getenv('REDDIT_API', ''),
-            client_secret=os.getenv('REDDIT_SECRET', ''),
+            client_id=os.getenv('REDDIT_API', 'ZLQ1i92zSxaWSQ'),
+            client_secret=os.getenv('REDDIT_SECRET', 'Da5pUrfOmsnxbhZ8gA_iKFNSB8o'),
             user_agent='python:crypto-sleuth:0.0.1 (by /u/rlawford)'
         )
         self.subs = config['subs']
@@ -33,12 +33,12 @@ class RedditReader(Scanner):
             count += 1
 
     def _cycle_replies(self, thread):
-        self._print_formatter('subTitle', 0, "Display Replies")
+        # self._print_formatter('subTitle', 0, "Display Replies")
         count = 1
         thread.comments.replace_more(limit=None)
         for comment in thread.comments.list():
             self._check_for_nod(comment.body)
-            self._print_formatter('cycle', 2, 'Reply', count)
+            # self._print_formatter('cycle', 2, 'Reply', count)
             count += 1
             self._check_for_nod(comment.body)
 

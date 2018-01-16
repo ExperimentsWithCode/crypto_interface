@@ -25,20 +25,20 @@ class Scanner():
         self._print_formatter('subTitle', 0, "Display Counts")
         keys = self.counts.keys()
         keys.sort()
-        for currency in keys:
-            self._print_formatter('displayCounts', 1, currency, self.counts[currency]['count'])
+        for coin in keys:
+            self._print_formatter('displayCounts', 1, coin, self.counts[coin]['count'])
 
     def get_comments(self):
-        currency = raw_input("select a currency: ")
-        self._print_formatter('subTitle', 0, "Get Comments on {0}".format(currency))
+        coin = raw_input("select a coin: ")
+        self._print_formatter('subTitle', 0, "Get Comments on {0}".format(coin))
         selection = ''
         i = 0
-        while selection != 'q' and i < len(self.counts[currency]['comments']):
+        while selection != 'q' and i < len(self.counts[coin]['comments']):
             i0 = i
-            while i <= i0 + 5 and i < len(self.counts[currency]['comments']):
+            while i <= i0 + 5 and i < len(self.counts[coin]['comments']):
                 try:
                     print(" - " * 100)
-                    self._print_formatter('displayCounts', 1, currency, self.counts[currency]['comments'][i])
+                    self._print_formatter('displayCounts', 1, coin, self.counts[coin]['comments'][i])
                 except Exception as e:
                     print('Failed to print comment')
                     print(e.message, e.args)
@@ -64,19 +64,19 @@ class Scanner():
         raise Exception('CYCLE_THREADS function should be overwritten')
 
     def _check_for_nod(self, content):
-        # Checks to see if any currency stored in crypto is mentioned.
-        for currency in self.crypto.currencies.keys():
+        # Checks to see if any coin stored in crypto is mentioned.
+        for coin in self.crypto.coins.keys():
             content = content.lower()
-            cur1 = currency.lower()
-            cur2 = self.crypto.currencies[currency]['CurrencyLong'].lower()
-            if cur1 in content:
-                if self._check_for_word(content, cur1):
-                    self.counts[currency]['count'] += 1
-                    self.counts[currency]['comments'].append(content)
-            elif cur2  in content:
-                if self._check_for_word(content, cur2):
-                    self.counts[currency]['count'] += 1
-                    self.counts[currency]['comments'].append(content)
+            symbol = coin.lower()
+            name = self.crypto.coins[coin].name.lower()
+            if symbol in content:
+                if self._check_for_word(content, symbol):
+                    self.counts[coin]['count'] += 1
+                    self.counts[coin]['comments'].append(content)
+            elif name  in content:
+                if self._check_for_word(content, name):
+                    self.counts[coin]['count'] += 1
+                    self.counts[coin]['comments'].append(content)
 
     @staticmethod
     def _check_for_word(content, substring):
