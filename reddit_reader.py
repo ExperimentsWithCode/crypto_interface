@@ -37,6 +37,6 @@ class RedditReader(Scanner):
         count = 1
         thread.comments.replace_more(limit=None)
         for comment in thread.comments.list():
-            self._check_for_nod(comment.body, comment.id, thread.id, comment.parent_id)
+            self._check_for_nod(comment.body, comment.id, thread.id, comment.parent_id.split('_')[1])
             self._print_formatter('cycle', 2, 'Reply', count)
             count += 1

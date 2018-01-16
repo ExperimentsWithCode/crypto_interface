@@ -119,7 +119,7 @@ class Scanner():
         self.mentions[mention_id]['coins_mentioned'][coin] += 1
         self.mentions[mention_id]['is_comment_body'] = True
         self.mentions[mention_id]['mention_body_id'] = mention_id
-        self.mentions[mention_id]['parent_id'] = parent_id.split('_')[1]
+        self.mentions[mention_id]['parent_id'] = parent_id
 
     @staticmethod
     def _check_for_word(content, substring):

@@ -19,6 +19,7 @@ class ChanReader(Scanner):
         self._print_formatter('title', 0, "Update Datastore")
         self._update_threads()
         self._cycle_threads()
+        self.save_mentions()
         print("\n\nDone Updating")
         print("!"*100+"\n")
 
@@ -53,7 +54,7 @@ class ChanReader(Scanner):
             count += 1
             if not self.post_ids[reply.post_id]:
                 self.post_ids[reply.post_id] = True
-                self._check_for_nod(reply.text_comment)
+                self._check_for_nod(reply.text_comment, reply.post_id, None, None)
 
     def _get_top_counts(self, limit=None):
         self._print_formatter('subTitle', 0, "Get Top Counts")
