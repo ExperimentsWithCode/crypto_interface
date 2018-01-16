@@ -46,11 +46,11 @@ class ChanReader(Scanner):
             count += 1
 
     def _cycle_replies(self, thread):
-        self._print_formatter('subTitle', 0, "Display Replies")
+        # self._print_formatter('subTitle', 0, "Display Replies")
         count = 1
         for reply in thread.replies:
             # os.system('clear')
-            self._print_formatter('cycle', 2, 'Reply', count, len(thread.replies), reply.post_id)
+            # self._print_formatter('cycle', 2, 'Reply', count, len(thread.replies), reply.post_id)
             count += 1
             if not self.post_ids[reply.post_id]:
                 self.post_ids[reply.post_id] = True
@@ -63,4 +63,3 @@ class ChanReader(Scanner):
         # sorted(keys, key=itemgetter('count') #fix
         for currency in keys:
             self._print_formatter('displayCounts', 1, currency, self.counts[currency]['count'])
-

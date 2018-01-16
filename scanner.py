@@ -65,20 +65,20 @@ class Scanner():
         self._print_formatter('subTitle', 0, "Display Counts")
         keys = self.counts.keys()
         keys.sort()
-        for currency in keys:
-            self._print_formatter('displayCounts', 1, currency, self.counts[currency]['total_count'])
+        for symbol in keys:
+            self._print_formatter('displayCounts', 1, symbol, self.counts[symbol]['total_count'])
 
     def get_comments(self):
-        currency = raw_input("select a currency: ")
-        self._print_formatter('subTitle', 0, "Get Comments on {0}".format(currency))
+        coin = raw_input("select a coin: ")
+        self._print_formatter('subTitle', 0, "Get Comments on {0}".format(coin))
         selection = ''
         i = 0
-        while selection != 'q' and i < len(self.counts[currency]['comments']):
+        while selection != 'q' and i < len(self.counts[coin]['comments']):
             i0 = i
-            while i <= i0 + 5 and i < len(self.counts[currency]['comments']):
+            while i <= i0 + 5 and i < len(self.counts[coin]['comments']):
                 try:
                     print(" - " * 100)
-                    self._print_formatter('displayCounts', 1, currency, self.counts[currency]['comments'][i])
+                    self._print_formatter('displayCounts', 1, coin, self.counts[coin]['comments'][i])
                 except Exception as e:
                     print('Failed to print comment')
                     print(e.message, e.args)
@@ -105,10 +105,10 @@ class Scanner():
 
     def _check_for_nod(self, content, comment_id, thread_id, parent_id):
         # Checks to see if any currency stored in crypto is mentioned.
-        for currency in self.crypto.currencies.keys():
+        for symbol in self.crypto.coins.keys():
             content = content.lower()
-            cur1 = currency.lower()
-            cur2 = self.crypto.currencies[currency]['CurrencyLong'].lower()
+            cur1 = symbol.lower()
+            cur2 = self.crypto.coins[symbol].name.lower()
             if cur1 in content and self._check_for_word(content, cur1):
                 self._record_nod(comment_id, content, thread_id, cur1, parent_id)
             elif cur2 in content and self._check_for_word(content, cur2):

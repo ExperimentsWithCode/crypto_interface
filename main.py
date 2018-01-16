@@ -1,14 +1,18 @@
 from crypto import Crypto
 from chan_reader import ChanReader
 from reddit_reader import RedditReader
+from pg import PostgresConnection
+
 
 REDDIT_SUBS = ['cryptocurrency']
 
 class Main():
-    def __init__(self):
+    def __init__(self, pg=None):
+        if pg == None:
+            pg = PostgresConnection()
         self.crypto = Crypto()
-        self.chan_reader = ChanReader(self.crypto, {'board': 'biz'})
-        self.reddit_reader = RedditReader(self.crypto, {'subs': REDDIT_SUBS})
+        self.chan_reader = ChanReader(self.crypto, {'board': 'biz'}, pg)
+        self.reddit_reader = RedditReader(self.crypto, {'subs': REDDIT_SUBS}, pg)
         self.options = {'a': {'display': 'Crypto Interface', 'func': self.crypto.options},
                         'b': {'display': '4Chan Interface', 'func': self.chan_reader.options},
                         'r': {'display': 'Reddit Interface', 'func': self.reddit_reader.options}

@@ -1,2 +1,6 @@
 basc_py4chan
 praw
+requests
+psycopg2
+pandas
+Logger
