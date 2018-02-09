@@ -18,11 +18,11 @@ HOLDINGS={
 
 
 class Crypto():
-    def __init__(self):
+    def __init__(self, pg):
         self.holdings = HOLDINGS
         self.holdingsKeys = self.holdings.keys()
         self.ethPrice = None
-        self.coins = {}
+        self.coins = {} # [u'Notice', u'TxFee', u'CurrencyLong', u'CoinType', u'Currency', u'MinConfirmation', u'BaseAddress', u'IsActive']
         self.options = {'a': {'display': 'Update Local ETH Price', 'func': self._update_eth_price},
                         'b': {'display': 'Display Currency Info', 'func': self._display_coins},
                         # 'c': {'display': 'Display Holdings Price Rates', 'func': self._display_holdings_rate},
@@ -32,6 +32,8 @@ class Crypto():
         self._update_eth_price()
         self._get_coins()
 
+    def get_coins_by_market_cap(self, mkt_cap):
+        return self.pg.get_coins_by_market_cap(mkt_cap)
 
     def _update_eth_price(self):
         # api call to pull ETH price from coinmarketcap which considers many exchange prices.
@@ -49,8 +51,7 @@ class Crypto():
             # Inform user of side effect
             self._print_divider()
             print ("Updated Eth Price to: {0}".format(self.ethPrice))
-#
-#
+
     def _display_coins(self):
         self._print_divider()
         # Return data keys:
@@ -110,8 +111,6 @@ class Crypto():
     #             print("\t\tBid: {0}".format(data['result']['Bid']))
     #             print("\t\tLast: {0} \n\n".format(data['result']['Last']))
 
-
-
     def _display_holdings_value(self):
         self._print_divider()
         print("Current Holdings Value")
@@ -122,13 +121,11 @@ class Crypto():
             currentVal = data['result']['Last'] * self.ethPrice * self.holdings[pair]['coins']
             totalVal += currentVal
             print("\tPair: " + pair)
-            print("\t\tValue: {0} \n\n".format(currentVal) )
-        print("\tTotal Value: {0} \n\n".format(totalVal) )
+            print("\t\tValue: {0} \n\n".format(currentVal))
+        print("\tTotal Value: {0} \n\n".format(totalVal))
 
     def _print_divider(self):
         print("_"*100)
-
-
 
 
 # Below will run if called directly. i.e . $python <file.py>
