@@ -88,5 +88,5 @@ Select: b
 * [ ] Add value options between base currencies
 * [ ] I/O for portfolio
 * [ ] proper DB for mentions history
-* [ ] Add tracking for Reddit
+* [x] Add tracking for Reddit
 *

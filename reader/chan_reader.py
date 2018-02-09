@@ -1,17 +1,15 @@
 # source https://github.com/bibanon/BASC-py4chan/
 
 import basc_py4chan
-from collections import defaultdict
-from crypto import Crypto
-import os
-from operator import itemgetter
-from scanner import Scanner
+
+from reader.reader_bass import Reader
 
 ACCEPTABLE_NEIGHBORS = [' ', '.', '/', '-', '!', ',', '?', '_']
 
-class ChanReader(Scanner):
+
+class ChanReader(Reader):
     def __init__(self, _crypto, config, pg):
-        Scanner.__init__(self, _crypto, pg)
+        Reader.__init__(self, _crypto, pg)
         self.board = basc_py4chan.Board(config['board'])
         self.all_thread_ids = self.board.get_all_thread_ids()
 

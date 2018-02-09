@@ -2,8 +2,8 @@ class Coin():
     def __init__(self, config):
         keys = config.keys()
         self.idx = config["id"] if 'id' in keys else None
-        self.name = config["name"]  if 'name' in keys else None
-        self.symbol = config["symbol"]  if 'symbol' in keys else None
+        self.name = config["name"] if 'name' in keys else None
+        self.symbol = config["symbol"] if 'symbol' in keys else None
         self.rank = config["rank"] if 'rank' in keys else None
         self.price_usd = config["price_usd"] if 'price_usd' in keys else None
         self.price_btc = config["price_btc"] if 'price_btc' in keys else None

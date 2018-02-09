@@ -16,7 +16,6 @@ HOLDINGS={
     }
 
 
-
 class Crypto():
     def __init__(self, pg):
         self.holdings = HOLDINGS
@@ -31,6 +30,7 @@ class Crypto():
                         }
         self._update_eth_price()
         self._get_coins()
+        self.pg = pg
 
     def get_coins_by_market_cap(self, mkt_cap):
         return self.pg.get_coins_by_market_cap(mkt_cap)

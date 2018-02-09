@@ -1,19 +1,17 @@
 import praw
-from praw.models import MoreComments
-import os
-from collections import defaultdict
-from scanner import Scanner
+
 from config import REDDIT_SECRET, REDDIT_API
+from reader.reader_bass import Reader
 
 ACCEPTABLE_NEIGHBORS = [' ', '.', '/', '-', '!', ',', '?', '_']
 
 
-class RedditReader(Scanner):
+class RedditReader(Reader):
     def __init__(self, _crypto, config, pg):
-        Scanner.__init__(self, _crypto, pg)
+        Reader.__init__(self, _crypto, pg)
         self.reddit = praw.Reddit(
-            client_id=os.getenv('REDDIT_API', REDDIT_API),
-            client_secret=os.getenv('REDDIT_SECRET', REDDIT_SECRET),
+            client_id=REDDIT_API,
+            client_secret=REDDIT_SECRET,
             user_agent='python:crypto-sleuth:0.0.1 (by /u/rlawford)'
         )
         self.subs = config['subs']
@@ -29,7 +27,7 @@ class RedditReader(Scanner):
         self._print_formatter('subTitle', 1, "Display Threads")
         for thread in self.threads:
             self._print_formatter('subTitle', 1, "Display Threads")
-            self._print_formatter('cycle', 1, 'Thread', count, thread.num_comments)
+            self._print_formatter('cycle', 1, 'Thread', count, "-('<')-", thread.num_comments)
             self._cycle_replies(thread)
             count += 1
 

@@ -4,7 +4,7 @@ from collections import defaultdict
 ACCEPTABLE_NEIGHBORS = [' ', '.', '/', '-', '!', ',', '?', '_']
 
 
-class Scanner():
+class Reader():
     def __init__(self, _crypto, pg):
         self.pg = pg
         self.crypto = _crypto

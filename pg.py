@@ -6,6 +6,8 @@ import psycopg2
 from psycopg2.extensions import AsIs
 import os
 from logger import Logger
+import unicodedata
+
 
 log = Logger('pg connection')
 
@@ -14,7 +16,6 @@ class PostgresConnection:
     def __init__(self):
         self.conn = None
         self.cur = None
-        self.run_type = os.getenv('RUN_TYPE', 'BACKTEST')
         self.table_names = {
             'save_mentions': 'coin_mentions',
             'save_mention_bodies': 'mention_bodies',
@@ -63,7 +64,7 @@ class PostgresConnection:
     def save_mentions(self, mentions):
         fmt_str = "('{coin_id}','{mention_body_id}',{is_thread_title},{is_thread_body},'{is_comment_body}',{num_mentions})"
         columns = "coin_id, mention_body_id, is_thread_title, is_thread_body, is_comment_body, num_mentions"
-        values = AsIs(','.join(fmt_str.format(**mention) for mention in mentions))
+        values = AsIs(','.join(fmt_str.format(**body) for body in mentions))
         params = {
             "columns": AsIs(columns),
             "values": values

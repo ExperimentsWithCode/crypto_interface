@@ -1,12 +1,13 @@
-from reddit_reader import RedditReader
 from crypto import Crypto
 from pg import PostgresConnection
-from chan_reader import ChanReader
+from reader.chan_reader import ChanReader
+from reader.reddit_reader import RedditReader
 
+db = PostgresConnection()
 subs = ['cryptocurrency']
-c = Crypto()
+c = Crypto(db)
 pg = PostgresConnection()
-chan = ChanReader(c, {'board': 'biz'}, pg)
-chan.update()
+# chan = ChanReader(c, {'board': 'biz'}, pg)
+# chan.update()
 r = RedditReader(c, {'subs': subs}, pg)
 r.update()
