@@ -17,7 +17,8 @@ class PostgresConnection:
         self.run_type = os.getenv('RUN_TYPE', 'BACKTEST')
         self.table_names = {
             'save_mentions': 'coin_mentions',
-            'save_mention_bodies': 'mention_bodies'
+            'save_mention_bodies': 'mention_bodies',
+            'coins': 'coins'
         }
 
     def table_name(self, table_type):
@@ -82,3 +83,45 @@ class PostgresConnection:
         query = """ INSERT INTO """ + self.table_name('save_mention_bodies') + """ (%(columns)s) VALUES %(values)s; """
         self._exec_query(query, params)
         return values
+
+    def save_coins(self, coin_data):
+        fmt_str = """(
+            '{Currency}',
+            '{CurrencyLong}',
+            {price_btc},
+            {price_eth},
+            {price_usd},
+            {mkt_cap},
+            '{Notice}',
+            {TxFee},
+            {CoinType},
+            {MinConfirmation},
+            {BaseAddress},
+            {IsActive}
+        )"""
+        columns = """
+            Currency,
+            CurrencyLong,
+            price_btc,
+            price_eth,
+            price_usd,
+            mkt_cap,
+            Notice,
+            CoinType,
+            MinConfirmation,
+            BaseAddress,
+            IsActive
+        """
+        values = AsIs(','.join(fmt_str.format(**coin) for coin in coin_data))
+        params = {
+            "columns": AsIs(columns),
+            "values": values
+        }
+        query = """ INSERT INTO """ + self.table_name('coins') + """ (%(columns)s) VALUES %(values)s; """
+        self._exec_query(query, params)
+        return values
+
+    def get_coins_by_market_cap(self, mkt_cap, greater_less):
+        query = """
+            SELECT * FROM """ + self.table_name('coins') + """ WHERE mkt_cap """ + greater_less + str(mkt_cap)
+        return self._fetch_query(query, {})

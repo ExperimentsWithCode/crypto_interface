@@ -16,21 +16,26 @@ HOLDINGS={
 
 
 class Crypto():
-    def __init__(self):
+    def __init__(self, pg):
         self.holdings = HOLDINGS
         self.holdingsKeys = self.holdings.keys()
         self.ethPrice = None
         self.currencies = {}   # [u'Notice', u'TxFee', u'CurrencyLong', u'CoinType', u'Currency', u'MinConfirmation', u'BaseAddress', u'IsActive']
-        self.options = {'a': {'display': 'Update Local ETH Price', 'func': self._updateETHprice},
-                        'b': {'display': 'Display Currency Info', 'func': self._displayCurrencies},
-                        'c': {'display': 'Display Holdings Price Rates', 'func': self._displayHoldingsRate},
-                        'd': {'display': 'Display Current Holdings Value', 'func': self._displayHoldingsValue},
-                        'e': {'display': 'Get Currencies', 'func': self._getCurrencies}
-                        }
-        self._updateETHprice()
-        self._getCurrencies()
+        self.options = {
+            'a': {'display': 'Update Local ETH Price', 'func': self._update_eth_price},
+            'b': {'display': 'Display Currency Info', 'func': self._display_currencies},
+            'c': {'display': 'Display Holdings Price Rates', 'func': self._display_holdings_rate},
+            'd': {'display': 'Display Current Holdings Value', 'func': self._display_holdings_value},
+            'e': {'display': 'Get Currencies', 'func': self._get_currencies}
+        }
+        self._update_eth_price()
+        self._get_currencies()
+        self.pg = pg
 
-    def _updateETHprice(self):
+    def get_coins_by_market_cap(self, mkt_cap):
+        return self.pg.get_coins_by_market_cap(mkt_cap)
+
+    def _update_eth_price(self):
         # api call to pull ETH price from coinmarketcap which considers many exchange prices.
         ethereumInfo = requests.get('https://api.coinmarketcap.com/v1/ticker/ethereum/')
         # data is stored here after being converted from json to python dict
@@ -41,12 +46,11 @@ class Crypto():
         #   Convert to Float cause more useful
         self.ethPrice = float(data['price_usd'])
         # Inform user of side effect
-        self._printDivider()
+        self._print_divider()
         print ("Updated Eth Price to: {0}".format(self.ethPrice))
-#
-#
-    def _displayCurrencies(self):
-        self._printDivider()
+
+    def _display_currencies(self):
+        self._print_divider()
         # Return data keys:
         #   [u'Notice', u'TxFee', u'CurrencyLong', u'CoinType', u'Currency', u'MinConfirmation', u'BaseAddress', u'IsActive']
         # Loop through resulting data
@@ -55,8 +59,8 @@ class Crypto():
             this_currency = self.currencies[d]
             print("{0} - {1} - {2}".format(this_currency['Currency'], this_currency['CurrencyLong'], this_currency['IsActive']))
 
-    def _getCurrencies(self):
-        self._printDivider()
+    def _get_currencies(self):
+        self._print_divider()
         print("Loading Currencies...")
         # Return data keys:
         #   [u'Notice', u'TxFee', u'CurrencyLong', u'CoinType', u'Currency', u'MinConfirmation', u'BaseAddress', u'IsActive']
@@ -68,9 +72,8 @@ class Crypto():
         for d in data['result']:
             self.currencies[d['Currency']] = d
 
-#
-    def _displayHoldingsRate(self):
-        self._printDivider()
+    def _display_holdings_rate(self):
+        self._print_divider()
         print("Current Holdings Rates")
         # [u'Ask', u'Bid', u'Last']
         for pair in self.holdingsKeys:
@@ -86,10 +89,8 @@ class Crypto():
             print("\t\tBid: {0}".format(data['result']['Bid']))
             print("\t\tLast: {0} \n\n".format(data['result']['Last']))
 
-
-
-    def _displayHoldingsValue(self):
-        self._printDivider()
+    def _display_holdings_value(self):
+        self._print_divider()
         print("Current Holdings Value")
         totalVal= 0.0
         for pair in self.holdingsKeys:
@@ -98,13 +99,11 @@ class Crypto():
             currentVal = data['result']['Last'] * self.ethPrice * self.holdings[pair]['coins']
             totalVal += currentVal
             print("\tPair: " + pair)
-            print("\t\tValue: {0} \n\n".format(currentVal) )
-        print("\tTotal Value: {0} \n\n".format(totalVal) )
+            print("\t\tValue: {0} \n\n".format(currentVal))
+        print("\tTotal Value: {0} \n\n".format(totalVal))
 
-    def _printDivider(self):
+    def _print_divider(self):
         print("_"*100)
-
-
 
 
 # Below will run if called directly. i.e . $python <file.py>
