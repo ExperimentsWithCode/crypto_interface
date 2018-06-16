@@ -9,6 +9,7 @@ ACCEPTABLE_NEIGHBORS = [' ', '.', '/', '-', '!', ',', '?', '_']
 
 class ChanReader(Reader):
     def __init__(self, _crypto, config, pg):
+        self.name = "4Chan"
         Reader.__init__(self, _crypto, pg)
         self.board = basc_py4chan.Board(config['board'])
         self.all_thread_ids = self.board.get_all_thread_ids()
@@ -17,6 +18,7 @@ class ChanReader(Reader):
         self._print_formatter('title', 0, "Update Datastore")
         self._update_threads()
         self._cycle_threads()
+        self.dump_to_file()
         # self.save_mentions()
         print("\n\nDone Updating")
         print("!"*100+"\n")
@@ -46,13 +48,14 @@ class ChanReader(Reader):
     def _cycle_replies(self, thread):
         # self._print_formatter('subTitle', 0, "Display Replies")
         count = 1
-        for reply in thread.replies:
+        for post in thread.all_posts:
+            # self.all_thread_text +=
             # os.system('clear')
-            # self._print_formatter('cycle', 2, 'Reply', count, len(thread.replies), reply.post_id)
+            # self._print_formatter('cycle', 2, 'Reply', count, len(thread.replies), post.post_id)
             count += 1
-            if not self.post_ids[reply.post_id]:
-                self.post_ids[reply.post_id] = True
-                self._check_for_nod(reply.text_comment, reply.post_id, None, None)
+            if not self.post_ids[post.post_id]:
+                self.post_ids[post.post_id] = True
+                self._check_for_nod(post.text_comment, post.post_id, None, None)
 
     def _get_top_counts(self, limit=None):
         self._print_formatter('subTitle', 0, "Get Top Counts")

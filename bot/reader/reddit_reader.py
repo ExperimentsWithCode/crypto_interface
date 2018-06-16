@@ -8,6 +8,7 @@ ACCEPTABLE_NEIGHBORS = [' ', '.', '/', '-', '!', ',', '?', '_']
 
 class RedditReader(Reader):
     def __init__(self, _crypto, config, pg):
+        self.name = "Reddit"
         Reader.__init__(self, _crypto, pg)
         self.reddit = praw.Reddit(
             client_id=REDDIT_API,
@@ -19,7 +20,7 @@ class RedditReader(Reader):
         self.threads = None
 
     def _update_threads(self):
-        self.threads = self.sub.rising()
+        self.threads = self.sub.top()
         self.current_thread = 0
 
     def _cycle_threads(self):
@@ -36,6 +37,7 @@ class RedditReader(Reader):
         count = 1
         thread.comments.replace_more(limit=None)
         for comment in thread.comments.list():
+            self.all_thread_text += comment.body.encode('utf-8') + " "
             self._check_for_nod(comment.body, comment.id, thread.id, comment.parent_id.split('_')[1])
             # self._print_formatter('cycle', 2, 'Reply', count)
             count += 1

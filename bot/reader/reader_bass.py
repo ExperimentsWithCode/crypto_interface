@@ -6,6 +6,7 @@ ACCEPTABLE_NEIGHBORS = [' ', '.', '/', '-', '!', ',', '?', '_']
 
 class Reader():
     def __init__(self, _crypto, pg):
+        self.name = ""
         self.pg = pg
         self.crypto = _crypto
         self.counts = defaultdict(lambda: {'count': 0, 'comments': []})
@@ -20,10 +21,12 @@ class Reader():
                 'coins_mentioned': defaultdict(lambda: 0)}
         )
         self.post_ids = defaultdict(lambda: False )
-        self.options = {'a': {'display': 'Update Datastore', 'func': self.update},
-                        'b': {'display': 'Display Counts', 'func': self.display_counts},
-                        'c': {'display': 'Get Comments by Coin', 'func': self.get_comments},
-                        }
+        self.options = {
+            'a': {'display': 'Update Datastore', 'func': self.update},
+            'b': {'display': 'Display Counts', 'func': self.display_counts},
+            'c': {'display': 'Get Comments by Coin', 'func': self.get_comments},
+        }
+        self.all_thread_text = ''
 
     def save_mentions(self):
         mention_body_ids = self.mentions.keys()
@@ -125,6 +128,8 @@ class Reader():
         self.counts[coin]['count'] += 1
         self.counts[coin]['comments'].append(content)
 
+        self.all_thread_text += coin.encode('utf-8') + " "
+
     @staticmethod
     def _check_for_word(content, substring):
         # Checks if nod at cypto is isolated, or just a substring of a larger word.
@@ -145,3 +150,8 @@ class Reader():
             start = content.find(substring, end)
             end = start + len(substring)
         return False
+
+    def dump_to_file(self):
+        text_file = open(self.name + "_thread_output.txt", "w")
+        text_file.write(self.all_thread_text)
+        text_file.close()
