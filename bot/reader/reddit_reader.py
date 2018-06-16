@@ -1,7 +1,7 @@
 import praw
 
+from bot.reader.reader_bass import Reader
 from config import REDDIT_SECRET, REDDIT_API
-from reader.reader_bass import Reader
 
 ACCEPTABLE_NEIGHBORS = [' ', '.', '/', '-', '!', ',', '?', '_']
 

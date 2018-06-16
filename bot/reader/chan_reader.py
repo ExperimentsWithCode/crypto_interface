@@ -2,7 +2,7 @@
 
 import basc_py4chan
 
-from reader.reader_bass import Reader
+from bot.reader.reader_bass import Reader
 
 ACCEPTABLE_NEIGHBORS = [' ', '.', '/', '-', '!', ',', '?', '_']
 
@@ -17,7 +17,7 @@ class ChanReader(Reader):
         self._print_formatter('title', 0, "Update Datastore")
         self._update_threads()
         self._cycle_threads()
-        self.save_mentions()
+        # self.save_mentions()
         print("\n\nDone Updating")
         print("!"*100+"\n")
 

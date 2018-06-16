@@ -1,13 +1,8 @@
-import datetime
-from time import mktime
-
 import pandas as pd
 import psycopg2
 from psycopg2.extensions import AsIs
-import os
-from logger import Logger
-import unicodedata
 
+from utils.logger import Logger
 
 log = Logger('pg connection')
 
@@ -122,7 +117,10 @@ class PostgresConnection:
         self._exec_query(query, params)
         return values
 
-    def get_coins_by_market_cap(self, mkt_cap, greater_less):
+    def get_coins_by_market_cap(self, min, max):
         query = """
-            SELECT * FROM """ + self.table_name('coins') + """ WHERE mkt_cap """ + greater_less + str(mkt_cap)
+            SELECT * FROM """ + self.table_name('coins') + """
+            WHERE mkt_cap >= """ + str(min) + """ AND mkt_cap <= """ + str(max) + """
+            ORDER BY mkt_cap;
+        """
         return self._fetch_query(query, {})

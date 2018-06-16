@@ -1,6 +1,9 @@
-import json, requests
-from collections import defaultdict
-from coin import Coin
+import json
+
+import requests
+
+from bot.coin import Coin
+from utils.colorize import colorize
 
 # API Docs
 # https://coinmarketcap.com/api/
@@ -22,41 +25,41 @@ class Crypto():
         self.holdingsKeys = self.holdings.keys()
         self.ethPrice = None
         self.coins = {} # [u'Notice', u'TxFee', u'CurrencyLong', u'CoinType', u'Currency', u'MinConfirmation', u'BaseAddress', u'IsActive']
-        self.options = {'a': {'display': 'Update Local ETH Price', 'func': self._update_eth_price},
-                        'b': {'display': 'Display Currency Info', 'func': self._display_coins},
-                        # 'c': {'display': 'Display Holdings Price Rates', 'func': self._display_holdings_rate},
-                        'd': {'display': 'Display Current Holdings Value', 'func':          self._display_holdings_value},
-                        'e': {'display': 'Get Currencies', 'func': self._get_coins}
-                        }
+        self.options = {
+            'a': {'display': 'Update Local ETH Price', 'func': self._update_eth_price},
+            'b': {'display': 'Display Currency Info', 'func': self._display_coins},
+            # 'c': {'display': 'Display Holdings Price Rates', 'func': self._display_holdings_rate},
+            'd': {'display': 'Display Current Holdings Value', 'func':          self._display_holdings_value},
+            'e': {'display': 'Get Currencies', 'func': self._get_coins},
+            'f': {'display': 'Set Market Cap Range', 'func': self._set_mkt_cap_range}
+        }
         self._update_eth_price()
         self._get_coins()
         self.pg = pg
 
-    def get_coins_by_market_cap(self, mkt_cap):
-        return self.pg.get_coins_by_market_cap(mkt_cap)
+    def _set_mkt_cap_range(self):
+        print(colorize.OKBLUE + "\nInput minimum market cap:" + colorize.ENDC)
+        self.min_mkt_cap = raw_input()
+        print(colorize.OKBLUE + "\nInput maximum market cap:" + colorize.ENDC)
+        self.max_mkt_cap = raw_input()
+
+    def get_coins_by_market_cap(self, min_mkt_cap, max_mkt_cap):
+        return self.pg.get_coins_by_market_cap(min_mkt_cap, max_mkt_cap)
 
     def _update_eth_price(self):
-        # api call to pull ETH price from coinmarketcap which considers many exchange prices.
         ethereumInfo = requests.get('https://api.coinmarketcap.com/v1/ticker/ethereum/')
-        # data is stored here after being converted from json to python dict
-        #   Because the data is returned as an array of dicts of length 1
-        #   I just indexed into the first result by default.
         if ethereumInfo.status_code == 429:
             print("** ** Too many requests ** **")
         else:
             data = json.loads(ethereumInfo.text)[0]
-            # The price is stored to the class in a dict under the key price_usd as a string.
-            #   Convert to Float cause more useful
             self.ethPrice = float(data['price_usd'])
-            # Inform user of side effect
             self._print_divider()
-            print ("Updated Eth Price to: {0}".format(self.ethPrice))
+            print(colorize.OKGREEN + "Updated Eth Price to: {0}".format(self.ethPrice) + colorize.ENDC)
 
     def _display_coins(self):
         self._print_divider()
         # Return data keys:
         #   [u'Notice', u'TxFee', u'CurrencyLong', u'CoinType', u'Currency', u'MinConfirmation', u'BaseAddress', u'IsActive']
-        # Loop through resulting data
         print("Currency List")
         for symbol in self.coins.keys():
             this_coin = self.coins[symbol]
@@ -67,14 +70,6 @@ class Crypto():
         print("Loading Currencies...")
         # Return data keys:
         #   [u'Notice', u'TxFee', u'CurrencyLong', u'CoinType', u'Currency', u'MinConfirmation', u'BaseAddress', u'IsActive']
-        # Get list of pairs
-        #   Currently not doing anything with this info
-        # pairs = requests.get('https://bittrex.com/api/v1.1/public/getcurrencies')
-        #
-        # data = json.loads(pairs.text)
-        # # Loop through resulting data
-        # for d in data['result']:
-        #     self.currencies[d['Currency']] = d
         start = 0
         limit = LIMIT
         raw_coins = requests.get('https://api.coinmarketcap.com/v1/ticker/?start='+str(start)+'&limit='+str(limit))
@@ -82,15 +77,9 @@ class Crypto():
             print("** ** Too many requests ** **")
         else:
             coins = json.loads(raw_coins.text)
-            # commented out loop due to reducing # of requests.
-            # while len(coins) == limit:
             print(coins[0]['name'])
             for coin in coins:
                 self.coins[coin['symbol']] = Coin(coin)
-            # start += limit
-            # coins = requests.get('https://api.coinmarketcap.com/v1/ticker/?start='+str(start)+'&limit='+str(limit))
-            # coins = json.loads(raw_coins.text)
-
 
 #
     # def _display_holdings_rate(self):
